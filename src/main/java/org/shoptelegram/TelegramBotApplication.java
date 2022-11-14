@@ -45,43 +45,43 @@ public class TelegramBotApplication extends TelegramBot {
 
     private void serveCommand(String commandName, Long chatId) throws SQLException {
         switch (commandName) {
-            case "/start": {
-                SendMessage response = new SendMessage(chatId, "Привет, это бот лояльности магазина ToFroShop \n"  +
+            case "/start" : {
+                SendMessage response = new SendMessage(chatId, "Привет, это бот лояльности магазина ToFroShop \n" +
                         "Здесь ты можешь проверить баланс своей карты или зарегистрировать ее \n")
                         .replyMarkup(new ReplyKeyboardMarkup(new String[][]{
-                        {"У меня уже есть карта"}, {"Зарегистрировать карту"}}));
+                                {"У меня уже есть карта"}, {"Зарегистрировать карту"}}));
                 this.execute(response);
                 break;
             }
-            case "У меня уже есть карта":
-            case "Зарегистрировать карту": {
-                SendMessage response = new SendMessage(chatId,"Введите номер телефона");
+            case "У меня уже есть карта":{
+                SendMessage response = new SendMessage(chatId, "Введите номер телефона");
+                this.execute(response);
+
+            }
+            case "Зарегистрировать карту" :{
+                SendMessage response = new SendMessage(chatId, "Введите номер телефона");
                 this.execute(response);
                 break;
-            }
-            default: {
-                if (LoyalCardServices.checkIsPhone(LoyalCardServices.formatPhone(commandName))){
+             }
+            default : {
+                if (LoyalCardServices.checkIsPhone(LoyalCardServices.formatPhone(commandName))) {
                     commandName = LoyalCardServices.formatPhone(commandName);
                     boolean b = loyalCards.containsKey(commandName);
                     LoyalCard loyalCard;
-                    if(b){
+                        if (b) {
                         loyalCard = loyalCards.get(commandName);
-                        SendMessage response = new SendMessage(chatId,"Ваша карта лояльности! \n \n" + loyalCard.toString());
+                        SendMessage response = new SendMessage(chatId, "Ваша карта лояльности! \n \n" + loyalCard.toString());
                         this.execute(response);
-                        break;
-                    }
-                    else {
+                    } else {
                         loyalCard = new LoyalCard(commandName, 0, 0);
                         DbUtils.saveLoyalCardDB(loyalCard);
-                        SendMessage response = new SendMessage(chatId,"Карта лояльности успешно зарегистрирована! " +
+                        SendMessage response = new SendMessage(chatId, "Карта лояльности успешно зарегистрирована! " +
                                 "Совершайте покупки, копите баллы, покупайте одноразовые по выгодной цене! \n \n" +
                                 loyalCard.toString());
                         this.execute(response);
-                        break;
                     }
-                }
-                else{
-                    SendMessage response = new SendMessage(chatId,"Введите верный запрос");
+                } else {
+                    SendMessage response = new SendMessage(chatId, "Введите верный запрос");
                     this.execute(response);
                 }
                 break;
